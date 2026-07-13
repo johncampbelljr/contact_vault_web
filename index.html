@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact Vault — The pause is the point.</title>
+<meta name="description" content="For the contacts you can’t delete but shouldn’t call. Contact Vault seals them behind a cooling-off timer you set — encrypted on your iPhone. No accounts, no cloud, no analytics.">
+<meta name="theme-color" content="#1A1A2E">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Contact Vault">
+<meta property="og:title" content="Contact Vault — The pause is the point.">
+<meta property="og:description" content="For the contacts you can’t delete but shouldn’t call. A cooling-off timer for the numbers that need distance — encrypted on-device. No accounts, no cloud, no analytics.">
+<meta name="twitter:card" content="summary">
+<!-- TODO before launch: point these at the real domain and add an og:image -->
+<!-- <link rel="canonical" href="https://example.com/"> -->
+<!-- <meta property="og:url" content="https://example.com/"> -->
+<!-- <meta property="og:image" content="https://example.com/og.png"> -->
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%231A1A2E'/><circle cx='32' cy='32' r='20' fill='none' stroke='%234FC3F7' stroke-width='2.5'/><circle cx='32' cy='32' r='24.5' fill='none' stroke='%234FC3F7' stroke-width='5' stroke-dasharray='1.8 11.03'/><path d='M25.5 30.5v-4.5a6.5 6.5 0 0 1 13 0v4.5' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/><rect x='22.5' y='30.5' width='19' height='14' rx='3.5' fill='white'/></svg>">
+
+<style>
+/* ============ Reset & tokens ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1A1A2E;
+  --bg-deep:#10101F;
+  --panel:#1E1E36;
+  --line:rgba(255,255,255,.08);
+  --text:#F3F5FB;
+  --muted:#A9B1C7;
+  --dim:#8A92AB;
+  --accent:#4FC3F7;
+  --orange:#FF9F0A;
+  --green:#30D158;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --display:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  color:var(--text);
+  line-height:1.6;
+  background:linear-gradient(180deg,var(--bg) 0%,var(--bg) 26%,var(--bg-deep) 100%);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body::before{ /* ambient glow */
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(850px 480px at 88% -8%, rgba(79,195,247,.09), transparent 65%),
+    radial-gradient(700px 420px at -12% 34%, rgba(79,195,247,.05), transparent 60%);
+}
+img,svg{display:block}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+::selection{background:rgba(79,195,247,.35)}
+[id]{scroll-margin-top:82px}
+.container{max-width:1100px;margin-inline:auto;padding-inline:22px}
+section{padding-block:clamp(58px,9vw,100px)}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.015em;line-height:1.12;font-weight:750}
+
+.skip{position:absolute;left:-9999px;top:10px;z-index:100;background:var(--accent);color:#07131D;padding:10px 16px;border-radius:10px;font-weight:700;text-decoration:none}
+.skip:focus{left:10px}
+
+/* ============ Nav ============ */
+.nav{
+  position:sticky;top:0;z-index:60;
+  background:rgba(16,16,31,.78);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:750;font-size:1.02rem;color:var(--text);text-decoration:none}
+.brand-icon{width:30px;height:30px}
+.nav-links{display:none;gap:26px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.92rem;font-weight:550}
+.nav-links a:hover{color:var(--text)}
+@media(min-width:640px){.nav-links{display:flex}}
+
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;border-radius:999px;text-decoration:none;transition:transform .2s ease,background .2s ease,box-shadow .2s ease}
+.btn-primary{background:var(--accent);color:#07131D;padding:9px 18px;font-size:.92rem;box-shadow:0 6px 20px -8px rgba(79,195,247,.55)}
+.btn-primary:hover{background:#74D3FA;transform:translateY(-1px)}
+
+/* ============ Hero ============ */
+.hero{display:grid;gap:44px;align-items:center;padding-top:clamp(30px,6vw,72px)}
+.hero-visual{order:-1;position:relative;isolation:isolate}
+@media(min-width:900px){
+  .hero{grid-template-columns:1.05fr .95fr;gap:56px}
+  .hero-visual{order:2}
+}
+.kicker{font-size:.78rem;font-weight:750;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+.kicker-long{text-transform:none;letter-spacing:.01em;font-size:.98rem;font-weight:650}
+.hero h1{font-size:clamp(2.5rem,5.8vw,3.7rem);margin-top:14px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.5vw,1.16rem);color:var(--muted);margin:20px 0 30px;max-width:34em}
+.hero-note{font-size:.86rem;color:var(--dim);margin-top:14px}
+
+.store-badge{display:inline-block;border-radius:13px;transition:transform .2s ease,box-shadow .2s ease}
+.store-badge:hover{transform:translateY(-2px);box-shadow:0 12px 32px -14px rgba(79,195,247,.5)}
+.store-badge svg{width:190px;height:57px}
+
+/* ============ Phone mockup ============ */
+.hero-visual::before{ /* glow behind the device */
+  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(500px,92vw);aspect-ratio:1;z-index:-1;
+  background:radial-gradient(closest-side,rgba(79,195,247,.17),rgba(255,159,10,.05) 55%,transparent 74%);
+  filter:blur(18px);
+}
+.device{
+  position:relative;width:min(312px,84vw);margin-inline:auto;
+  border-radius:54px;padding:11px;
+  background:linear-gradient(180deg,#2B2B4C,#151528);
+  box-shadow:0 0 0 1px rgba(255,255,255,.09),0 42px 90px -32px rgba(0,0,0,.85),0 26px 70px -18px rgba(79,195,247,.16);
+}
+.screen{
+  position:relative;border-radius:44px;overflow:hidden;
+  background:linear-gradient(180deg,#191932,#101020);
+  border:1px solid rgba(255,255,255,.05);
+  aspect-ratio:9/18.6;display:flex;flex-direction:column;
+}
+.screen::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 44px rgba(0,0,0,.35);pointer-events:none}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:88px;height:25px;border-radius:13px;background:#050509;z-index:2}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:13px 26px 0;font-size:.78rem;font-weight:650}
+.sb-batt{width:24px;height:11px}
+.app{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px 20px 26px}
+.app-title{font-family:var(--display);font-weight:750;font-size:1rem;letter-spacing:.01em}
+
+.ring-wrap{position:relative;width:188px;margin-top:12px}
+.ring{width:100%;height:auto}
+.ring-ticks{fill:none;stroke:rgba(255,255,255,.08);stroke-width:7;stroke-dasharray:1.5 5.83;animation:spin 80s linear infinite}
+.ring-track{fill:none;stroke:rgba(255,255,255,.09);stroke-width:11}
+.ring-fill{
+  fill:none;stroke:var(--orange);stroke-width:11;stroke-linecap:round;
+  stroke-dasharray:540.4;stroke-dashoffset:162.1; /* 70% filled */
+  transform:rotate(-90deg);transform-origin:50% 50%;
+  filter:drop-shadow(0 0 8px rgba(255,159,10,.35));
+  animation:ringfill 2.8s cubic-bezier(.25,.8,.3,1) .5s both;
+}
+@keyframes ringfill{from{stroke-dashoffset:540.4}}
+@keyframes spin{to{rotate:360deg}}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.ring-time{font-size:1.95rem;font-weight:760;font-variant-numeric:tabular-nums;font-feature-settings:"tnum";letter-spacing:-.01em;line-height:1.1}
+.ring-time .u{font-size:1.05rem;font-weight:600;color:var(--muted)}
+.ring-sub{font-size:.72rem;color:var(--dim);letter-spacing:.02em}
+
+.contact{display:flex;align-items:center;gap:10px;margin-top:16px}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:750;font-size:.88rem;color:#06131E;background:linear-gradient(135deg,#7ED2F8,#3EA8DE)}
+.av-g{background:linear-gradient(135deg,#7DE8A2,#2FBF62)}
+.av-p{background:linear-gradient(135deg,#C9CFE2,#9AA3BD)}
+.c-name{font-weight:650;font-size:1rem;line-height:1.25}
+.c-sub{font-size:.72rem;color:var(--dim)}
+.pill{display:inline-flex;align-items:center;gap:7px;margin-top:13px;padding:7px 14px;border-radius:999px;font-size:.78rem;font-weight:650;letter-spacing:.01em}
+.pill-orange{background:rgba(255,159,10,.14);color:#FFB84D;border:1px solid rgba(255,159,10,.32)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:pulse 2.4s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,159,10,.5)}70%{box-shadow:0 0 0 6px rgba(255,159,10,0)}100%{box-shadow:0 0 0 0 rgba(255,159,10,0)}}
+
+.vault-list{width:100%;margin-top:20px;display:flex;flex-direction:column;gap:8px}
+.vl-label{font-size:.62rem;letter-spacing:.13em;color:var(--dim);text-transform:uppercase;font-weight:750;margin:0 2px 2px}
+.rowc{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:9px 12px}
+.rowc .avatar{width:28px;height:28px;font-size:.74rem}
+.r-name{flex:1;font-size:.88rem;font-weight:600}
+.chip{font-size:.68rem;font-weight:750;padding:4px 10px;border-radius:999px}
+.chip-green{color:#54DF7E;background:rgba(48,209,88,.16)}
+.chip-dim{color:var(--dim);background:rgba(255,255,255,.07)}
+.home-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:104px;height:4px;border-radius:2px;background:rgba(255,255,255,.28)}
+
+/* ============ Section headers ============ */
+.head{max-width:700px;margin:0 auto clamp(32px,5vw,52px);text-align:center}
+.head h2{font-size:clamp(1.75rem,3.4vw,2.4rem);margin-top:12px}
+.head .sub{color:var(--muted);margin-top:12px}
+
+/* ============ How it works ============ */
+.steps{display:grid;gap:16px}
+@media(min-width:760px){.steps{grid-template-columns:repeat(3,1fr);gap:20px}}
+.step{position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:26px;transition:transform .25s ease,border-color .25s ease}
+.step:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16)}
+.step::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--c),transparent 85%);opacity:.9}
+.step-num{position:absolute;top:22px;right:24px;font-variant-numeric:tabular-nums;color:var(--dim);font-weight:750;font-size:.78rem;letter-spacing:.12em}
+.step-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--chip);color:var(--c);margin-bottom:16px}
+.step-icon svg{width:24px;height:24px}
+.step h3{font-size:1.16rem;margin-bottom:8px}
+.step p{color:var(--muted);font-size:.95rem}
+.s1{--c:var(--accent);--chip:rgba(79,195,247,.13)}
+.s2{--c:var(--orange);--chip:rgba(255,159,10,.12)}
+.s3{--c:var(--green);--chip:rgba(48,209,88,.12)}
+
+/* ============ Features ============ */
+.tiles{display:grid;gap:14px}
+@media(min-width:620px){.tiles{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:980px){.tiles{grid-template-columns:repeat(3,1fr);gap:18px}}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;transition:transform .25s ease,border-color .25s ease}
+.tile:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16)}
+.tile-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--chip);color:var(--c);margin-bottom:14px}
+.tile-icon svg{width:21px;height:21px}
+.tile h3{font-size:1.05rem;margin-bottom:6px}
+.tile p{color:var(--muted);font-size:.92rem}
+.t-blue{--c:var(--accent);--chip:rgba(79,195,247,.13)}
+.t-orange{--c:var(--orange);--chip:rgba(255,159,10,.12)}
+.t-green{--c:var(--green);--chip:rgba(48,209,88,.12)}
+
+/* ============ Privacy ============ */
+.privacy-card{
+  max-width:840px;margin:0 auto;text-align:center;
+  background:linear-gradient(180deg,#20203E,#161629);
+  border:1px solid rgba(79,195,247,.22);border-radius:26px;
+  padding:clamp(34px,6vw,60px);
+  box-shadow:0 34px 90px -48px rgba(79,195,247,.3);
+}
+.p-icon{width:58px;height:58px;margin:0 auto 20px}
+.privacy-card h2{font-size:clamp(1.6rem,3.2vw,2.15rem)}
+.privacy-card .p-lead{color:var(--muted);margin:16px auto 0;max-width:38em}
+.p-divider{border:none;border-top:1px solid var(--line);width:64%;margin:32px auto}
+.privacy-card h3{font-size:1.1rem;margin-bottom:10px}
+.p-policy{color:var(--muted);font-size:.95rem;max-width:40em;margin:0 auto}
+.p-fine{font-size:.8rem;color:var(--dim);margin-top:18px}
+
+/* ============ FAQ ============ */
+.faq{max-width:760px;margin:0 auto;display:grid;gap:12px}
+.faq details{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.faq details[open]{border-color:rgba(79,195,247,.3)}
+.faq summary{display:flex;justify-content:space-between;align-items:center;gap:16px;cursor:pointer;padding:17px 20px;font-weight:650;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";flex-shrink:0;color:var(--accent);font-size:1.35rem;font-weight:400;line-height:1;transition:transform .25s ease}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq-a{padding:0 20px 18px;color:var(--muted);font-size:.95rem}
+
+/* ============ CTA ============ */
+.cta{text-align:center}
+.cta h2{font-size:clamp(1.75rem,3.4vw,2.4rem)}
+.cta p{color:var(--muted);margin-top:10px}
+.cta .store-badge{margin-top:28px}
+
+/* ============ Footer ============ */
+footer{background:#0C0C16;border-top:1px solid var(--line);padding:40px 0 48px}
+.foot{display:flex;flex-direction:column;gap:26px}
+@media(min-width:760px){.foot{flex-direction:row;align-items:flex-start;justify-content:space-between}}
+.foot-brand{display:flex;gap:12px;align-items:center;font-family:var(--display)}
+.foot-tag{color:var(--dim);font-size:.85rem}
+.foot-links{display:flex;gap:22px;flex-wrap:wrap}
+.foot-links a{color:var(--muted);text-decoration:none;font-size:.92rem}
+.foot-links a:hover{color:var(--text)}
+.foot-meta{color:var(--dim);font-size:.85rem;display:flex;flex-direction:column;gap:4px}
+@media(min-width:760px){.foot-meta{text-align:right}}
+
+/* ============ Reduced motion ============ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+</style>
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Shared SVG defs -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <!-- App icon: white padlock in a light-blue vault dial on dark navy -->
+  <symbol id="icon-vault" viewBox="0 0 64 64">
+    <rect width="64" height="64" rx="14.5" fill="#10101F"/>
+    <circle cx="32" cy="32" r="24.5" fill="none" stroke="#4FC3F7" stroke-width="5" stroke-dasharray="1.8 11.03" opacity=".9"/>
+    <circle cx="32" cy="32" r="20" fill="none" stroke="#4FC3F7" stroke-width="2.5"/>
+    <path d="M25.5 30.5v-4.5a6.5 6.5 0 0 1 13 0v4.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <rect x="22.5" y="30.5" width="19" height="14" rx="3.5" fill="#fff"/>
+    <circle cx="32" cy="36.2" r="2.1" fill="#10101F"/>
+    <path d="M32 37.8v2.5" stroke="#10101F" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- App Store badge. Placeholder art — swap in Apple's official badge asset before launch. -->
+  <symbol id="badge-appstore" viewBox="0 0 200 60">
+    <rect x="1" y="1" width="198" height="58" rx="13" fill="#000" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/>
+    <g fill="#fff">
+      <path d="M32.6 21.4c-1.8 0-3.2 1-4.3 1-1.2 0-2.8-1-4.6-1-3.9 0-7.6 3.4-7.6 8.9 0 6.6 4.9 13.3 8.1 13.3 1.4 0 2.4-.9 4.1-.9 1.6 0 2.6.9 4.1.9 3.3 0 8-6.9 8-13.3 0-5.5-3.9-8.9-7.8-8.9z"/>
+      <path d="M31.5 18.9c1.4-1.7 2.4-4 2.1-6.4-2 .1-4.4 1.4-5.8 3.1-1.3 1.5-2.4 3.9-2 6.1 2.2.2 4.4-1.1 5.7-2.8z"/>
+    </g>
+    <text x="52" y="26" fill="#fff" opacity=".85" font-size="11" letter-spacing=".3">Download on the</text>
+    <text x="52" y="46" fill="#fff" font-size="20.5" font-weight="600" letter-spacing=".2">App Store</text>
+  </symbol>
+</svg>
+
+<header class="nav">
+  <div class="nav-inner container">
+    <a class="brand" href="#top" aria-label="Contact Vault — back to top">
+      <svg class="brand-icon" aria-hidden="true"><use href="#icon-vault"/></svg>
+      <span>Contact Vault</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <!-- TODO: real App Store URL -->
+    <a class="btn btn-primary" href="#">Get the App</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ Hero ============ -->
+  <section class="hero container" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="kicker">Contact Vault for iPhone</p>
+      <h1 id="hero-title">The <em>pause</em> is the point.</h1>
+      <p class="lede">Some numbers you shouldn’t delete — you just shouldn’t be able to text them at 1&nbsp;a.m. The ex. The old dealer. The rep who has your card on file. Contact Vault seals them behind a cooling-off timer you choose, then hands them back once you’ve had time to think.</p>
+      <!-- TODO: real App Store URL -->
+      <a class="store-badge" href="#" aria-label="Download Contact Vault on the App Store">
+        <svg viewBox="0 0 200 60" aria-hidden="true"><use href="#badge-appstore"/></svg>
+      </a>
+      <p class="hero-note">No account. No cloud. Nothing leaves your phone.</p>
+    </div>
+
+    <div class="hero-visual">
+      <div class="device" role="img" aria-label="iPhone running Contact Vault. A contact named Alex is cooling off, with 2 hours 14 minutes until unlocked. Below, Jamie is available and Riley is locked.">
+        <div class="screen">
+          <span class="island"></span>
+          <div class="statusbar">
+            <span>1:07</span>
+            <svg class="sb-batt" viewBox="0 0 26 12">
+              <rect x=".7" y="1" width="20.6" height="10" rx="3.2" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.2"/>
+              <rect x="2.7" y="3" width="12" height="6" rx="1.6" fill="#fff"/>
+              <path d="M23.6 4.4v3.2" stroke="rgba(255,255,255,.45)" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="app">
+            <span class="app-title">Vault</span>
+
+            <div class="ring-wrap">
+              <svg class="ring" viewBox="0 0 200 200">
+                <circle class="ring-ticks" cx="100" cy="100" r="70"/>
+                <circle class="ring-track" cx="100" cy="100" r="86"/>
+                <circle class="ring-fill" cx="100" cy="100" r="86"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-time">2<span class="u">h</span> 14<span class="u">m</span></div>
+                <div class="ring-sub">until unlocked</div>
+              </div>
+            </div>
+
+            <div class="contact">
+              <span class="avatar">A</span>
+              <div>
+                <div class="c-name">Alex</div>
+                <div class="c-sub">requested at 11:53 PM</div>
+              </div>
+            </div>
+            <span class="pill pill-orange"><span class="dot"></span>Cooling off</span>
+
+            <div class="vault-list">
+              <div class="vl-label">In the vault</div>
+              <div class="rowc">
+                <span class="avatar av-g">J</span>
+                <span class="r-name">Jamie</span>
+                <span class="chip chip-green">Available</span>
+              </div>
+              <div class="rowc">
+                <span class="avatar av-p">R</span>
+                <span class="r-name">Riley</span>
+                <span class="chip chip-dim">Locked</span>
+              </div>
+            </div>
+          </div>
+          <span class="home-bar"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ How it works ============ -->
+  <section id="how" class="container" aria-labelledby="how-title">
+    <div class="head">
+      <p class="kicker kicker-long">For the contacts you can’t delete but shouldn’t call.</p>
+      <h2 id="how-title">How it works</h2>
+      <p class="sub">No willpower required at the moment you have the least of it.</p>
+    </div>
+    <div class="steps">
+      <article class="step s1">
+        <span class="step-num" aria-hidden="true">01</span>
+        <span class="step-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9.5" cy="8" r="3.7"/>
+            <path d="M3 20.6c.7-3.6 3.4-5.8 6.5-5.8 1.7 0 3.2.6 4.4 1.6"/>
+            <path d="M18.5 13.8v5.8"/><path d="M15.6 16.7h5.8"/>
+          </svg>
+        </span>
+        <h3>Lock it away</h3>
+        <p>Pick a contact. It’s encrypted on your device and removed from your address book — photo, addresses, everything preserved inside the vault. Out of sight, out of autocomplete.</p>
+      </article>
+      <article class="step s2">
+        <span class="step-num" aria-hidden="true">02</span>
+        <span class="step-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6.5 3.2h11"/><path d="M6.5 20.8h11"/>
+            <path d="M8.2 3.2v2.6c0 3 3.8 3.9 3.8 6.2s-3.8 3.2-3.8 6.2v2.6"/>
+            <path d="M15.8 3.2v2.6c0 3-3.8 3.9-3.8 6.2s3.8 3.2 3.8 6.2v2.6"/>
+          </svg>
+        </span>
+        <h3>Ask, then wait</h3>
+        <p>Want back in? Request access and a timer starts — anywhere from minutes to a week. You set it. No confirmation dialogs, no “are you sure?” The wait is the safeguard.</p>
+      </article>
+      <article class="step s3">
+        <span class="step-num" aria-hidden="true">03</span>
+        <span class="step-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4.6" y="10.6" width="14.8" height="9.6" rx="2.6"/>
+            <path d="M8.4 10.6V7.2a4.3 4.3 0 0 1 8.4-1.3"/>
+            <path d="M12 14.4v2"/>
+          </svg>
+        </span>
+        <h3>Briefly unlocked</h3>
+        <p>When time’s up, you get a short window: see the details, message or call directly, or restore the contact for good. Then the vault closes itself again.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ Features ============ -->
+  <section id="features" class="container" aria-labelledby="feat-title">
+    <div class="head">
+      <p class="kicker">Why it works</p>
+      <h2 id="feat-title">A speed bump, not a wall</h2>
+      <p class="sub">You always get access eventually. Just not instantly — and that’s the whole trick.</p>
+    </div>
+    <div class="tiles">
+      <article class="tile t-orange">
+        <span class="tile-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="13.5" r="7.2"/><path d="M12 9.8v3.7l2.7 1.9"/>
+            <path d="M9.8 2.6h4.4"/><path d="M12 2.6v2.4"/>
+          </svg>
+        </span>
+        <h3>A timer you can’t sweet-talk</h3>
+        <p>Decide to shorten a wait? That change waits out the current delay first. Timers already running never shrink. Past-you stays in charge.</p>
+      </article>
+      <article class="tile t-blue">
+        <span class="tile-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3.1l6.9 2.7v5.3c0 4.6-3.2 7.7-6.9 9.8-3.7-2.1-6.9-5.2-6.9-9.8V5.8z"/>
+            <circle cx="12" cy="10.9" r="1.5"/><path d="M12 12.4v2.8"/>
+          </svg>
+        </span>
+        <h3>Sealed on your iPhone</h3>
+        <p>AES-256 encryption via Apple’s CryptoKit, with the key stored in your device Keychain. No servers involved — because there are no servers.</p>
+      </article>
+      <article class="tile t-green">
+        <span class="tile-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+        </span>
+        <h3>Full-fidelity restore</h3>
+        <p>Photo, numbers, emails, addresses, birthday — everything comes back exactly as it went in. (Except Notes; Apple keeps that field off-limits.)</p>
+      </article>
+      <article class="tile t-blue">
+        <span class="tile-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+          </svg>
+        </span>
+        <h3>Reach out without restoring</h3>
+        <p>In an unlock window you can message or call right from the app. The contact never has to re-enter your address book.</p>
+      </article>
+      <article class="tile t-orange">
+        <span class="tile-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4.8" y="10.8" width="14.4" height="9.4" rx="2.6"/>
+            <path d="M8.5 10.8V7.4a3.5 3.5 0 0 1 7 0v3.4"/>
+          </svg>
+        </span>
+        <h3>Locks itself behind you</h3>
+        <p>The viewing window is short and closes on its own. No cleanup, no “lock it back” chore, no lingering temptation.</p>
+      </article>
+      <article class="tile t-green">
+        <span class="tile-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </span>
+        <h3>Know the moment it opens</h3>
+        <p>A notification arrives the second your wait is up. No checking, no watching the clock — that’s the timer’s job.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ Privacy ============ -->
+  <section id="privacy" class="container" aria-labelledby="privacy-title">
+    <div class="privacy-card">
+      <svg class="p-icon" aria-hidden="true"><use href="#icon-vault"/></svg>
+      <h2 id="privacy-title">No accounts. No cloud. No analytics.</h2>
+      <p class="p-lead">Contact Vault doesn’t have a backend. Not “a secure backend” — none. Your contacts are encrypted at rest with AES-GCM (256-bit, via Apple’s CryptoKit), the key is stored in your iPhone’s Keychain, and the encrypted data never travels anywhere. We can’t read your vault, lose it, or sell it. We never see it.</p>
+      <hr class="p-divider">
+      <h3>The privacy policy, in full</h3>
+      <p class="p-policy">Contact Vault collects no personal data. No contacts, no usage data, no identifiers, no crash reports, no analytics of any kind. The app requests Contacts permission solely to move the contacts you choose into your on-device vault, and notification permission solely to tell you when a timer ends. It makes no network connections and contains no third-party SDKs, ads, or trackers. If this policy ever changes, this page changes first — but the plan is for it to stay exactly this short.</p>
+      <!-- TODO: real support address -->
+      <p class="p-fine">Effective July 13, 2026 · Questions: <a href="mailto:support@contactvault.example">support@contactvault.example</a></p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="container" aria-labelledby="faq-title">
+    <div class="head">
+      <p class="kicker">FAQ</p>
+      <h2 id="faq-title">Fair questions</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Is my data actually safe?</summary>
+        <p class="faq-a">It never leaves your phone, so the usual worries don’t apply. Contacts are encrypted with AES-256-GCM using Apple’s CryptoKit; the key lives in your iOS Keychain. There’s no account, no sync, no server — nothing to breach. One honest caveat: delete the app and the vault goes with it, so restore anyone you want to keep first.</p>
+      </details>
+      <details>
+        <summary>What if I genuinely need someone during a wait I set?</summary>
+        <p class="faq-a">Then you wait — there’s no override, because the whole point is that there’s no override. But you pick every delay, so be honest when you set it: minutes for the impulse purchases, longer for the people who cost you more. Emergencies deserve thought too, and someone you might truly need in one probably doesn’t belong in a vault. This app is for the contacts you’ve already decided need distance.</p>
+      </details>
+      <details>
+        <summary>Can I get a contact back permanently?</summary>
+        <p class="faq-a">Yes, always. Every unlock window includes a Restore option that returns the contact to your address book exactly as it was and clears it from the vault. Contact Vault is a speed bump, not a wall — you always get through eventually.</p>
+      </details>
+      <details>
+        <summary>Does locking someone delete our message history?</summary>
+        <p class="faq-a">No. iOS doesn’t let apps touch your Messages — and we wouldn’t want to. Removing the contact card just un-names the conversation, so the old thread shows a bare phone number instead of a name. Which, honestly, helps.</p>
+      </details>
+      <details>
+        <summary>Is anything not preserved?</summary>
+        <p class="faq-a">One field: Notes. Apple restricts apps’ access to a contact’s Notes, so whatever you wrote there doesn’t make the round trip. Everything else — photo, numbers, emails, addresses, birthdays, company — comes back untouched.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="cta container" aria-labelledby="cta-title">
+    <h2 id="cta-title">Ready when you are.</h2>
+    <p>Put a little time between the impulse and the call.</p>
+    <!-- TODO: real App Store URL -->
+    <a class="store-badge" href="#" aria-label="Download Contact Vault on the App Store">
+      <svg viewBox="0 0 200 60" aria-hidden="true"><use href="#badge-appstore"/></svg>
+    </a>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot container">
+    <div class="foot-brand">
+      <svg class="brand-icon" aria-hidden="true"><use href="#icon-vault"/></svg>
+      <div>
+        <strong>Contact Vault</strong>
+        <div class="foot-tag">Be kind to future you.</div>
+      </div>
+    </div>
+    <nav class="foot-links" aria-label="Footer">
+      <!-- TODO: real support address -->
+      <a href="mailto:support@contactvault.example">Support</a>
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#how">How it works</a>
+    </nav>
+    <div class="foot-meta">
+      <div>© 2026 John Campbell Jr</div>
+      <div>Made for iPhone · iOS 17+</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
